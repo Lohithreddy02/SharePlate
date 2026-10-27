@@ -1,11 +1,23 @@
 import axios from 'axios';
 
+// Normalize the base URL so that it always targets the API endpoints correctly,
+// whether VITE_API_BASE_URL is "https://domain.com", "https://domain.com/api", or "/api"
+const getBaseURL = () => {
+  const envUrl = import.meta.env.VITE_API_BASE_URL;
+  if (!envUrl || envUrl.trim() === '') {
+    return '/api';
+  }
+  const cleanUrl = envUrl.trim().replace(/\/+$/, '');
+  return cleanUrl.endsWith('/api') ? cleanUrl : `${cleanUrl}/api`;
+};
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || '/api',
+  baseURL: getBaseURL(),
   headers: {
     'Content-Type': 'application/json'
   }
 });
+
 
 // Request interceptor to attach JWT token
 api.interceptors.request.use(

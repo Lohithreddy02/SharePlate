@@ -15,9 +15,33 @@ const app = express();
 app.use(helmet());
 
 // Cross-Origin Resource Sharing
+const allowedOrigins = process.env.CLIENT_URL
+  ? process.env.CLIENT_URL.split(',').map((url) => url.trim().replace(/\/+$/, ''))
+  : [];
+
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || '*',
+    origin: (origin, callback) => {
+      // Allow requests with no origin (e.g. mobile apps, curl, server-to-server)
+      if (!origin) return callback(null, true);
+
+      // If allowed origins specified, check exact match
+      if (allowedOrigins.length > 0 && allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+
+      // Allow Vercel deployments, localhost, or when no CLIENT_URL set
+      if (
+        allowedOrigins.length === 0 ||
+        origin.endsWith('.vercel.app') ||
+        origin.includes('localhost') ||
+        origin.includes('127.0.0.1')
+      ) {
+        return callback(null, true);
+      }
+
+      callback(null, false);
+    },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS']
   })
@@ -28,7 +52,7 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // Health check endpoint
-app.get('/api/health', (req, res) => {
+app.get(['/api/health', '/health'], (req, res) => {
   res.status(200).json({
     status: 'ok',
     service: 'SharePlate API',
@@ -36,10 +60,13 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// Mount modular routes
+// Mount modular routes (both /api and root prefixes for deployment resilience)
 app.use('/api/auth', authRoutes);
+app.use('/auth', authRoutes);
 app.use('/api/donations', donationRoutes);
+app.use('/donations', donationRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/admin', adminRoutes);
 
 // Fallthrough 404 handler and error handler
 app.use(notFoundHandler);

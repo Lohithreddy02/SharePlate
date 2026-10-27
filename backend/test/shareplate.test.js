@@ -103,6 +103,20 @@ describe('SharePlate Integration & Workflow Test Suite', () => {
       expect(res.body.user.organization.verificationStatus).toBe('not_applicable');
     });
 
+    it('registers successfully via /auth/register (direct root route compatibility)', async () => {
+      const res = await request(app).post('/auth/register').send({
+        name: 'Direct Route Donor',
+        email: 'direct@route.com',
+        password: 'SecurePass123',
+        role: 'donor',
+        phone: '+1 555-4321',
+        organization: { name: 'Direct Mess', type: 'canteen' }
+      });
+
+      expect(res.status).toBe(201);
+      expect(res.body.success).toBe(true);
+    });
+
     it('rejects duplicate email registration', async () => {
       await createDonor();
       const res = await request(app).post('/api/auth/register').send({
