@@ -22,7 +22,7 @@ describe('Database Connection Module (connectDB)', () => {
     delete process.env.MONGODB_URI;
 
     await expect(connectDB()).rejects.toThrow(
-      /Fatal Error: MONGODB_URI environment variable is missing in production/i
+      /MONGODB_URI is required in production. Configure it in Render./i
     );
   });
 
@@ -31,7 +31,7 @@ describe('Database Connection Module (connectDB)', () => {
     process.env.MONGODB_URI = '   ';
 
     await expect(connectDB()).rejects.toThrow(
-      /Fatal Error: MONGODB_URI environment variable is missing in production/i
+      /MONGODB_URI is required in production. Configure it in Render./i
     );
   });
 
