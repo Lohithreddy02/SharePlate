@@ -3,6 +3,7 @@
 SharePlate is a full-stack MERN web application built for an end-term software engineering project. It bridges commercial food donors (restaurants, university hostel mess halls, canteens, bakeries, event caterers) directly with verified non-governmental organizations (NGOs, community food banks, night shelters) to safely rescue edible surplus food before it goes to waste.
 
 ---
+## Demo Link : https://drive.google.com/file/d/1UcR7_JEf2v8E7F5v32a9t96vMI4muTVG/view?usp=sharing
 
 ## 1. Table of Contents
 - [Architecture & Tech Stack](#2-architecture--tech-stack)
