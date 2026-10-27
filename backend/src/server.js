@@ -29,7 +29,7 @@ const startServer = async () => {
     process.on('SIGINT', () => handleExit('SIGINT'));
     process.on('SIGTERM', () => handleExit('SIGTERM'));
   } catch (err) {
-    console.error('Failed to start SharePlate backend server:', err);
+    console.error('Failed to start SharePlate backend server:', err.message || err);
     process.exit(1);
   }
 };
